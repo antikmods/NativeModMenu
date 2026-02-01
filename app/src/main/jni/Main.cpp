@@ -20,6 +20,7 @@
 
 #include "KittyMemory/MemoryPatch.h"
 #include "And64InlineHook/And64InlineHook.hpp"
+#include "AutoHook/AutoHook.h"
 #include "Menu.h"
 
 
