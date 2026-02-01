@@ -12,47 +12,40 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # REQUIRED for creating releases
+      contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '11'
+          java-version: '17'
           cache: gradle
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 🔧 CHANGE assembleDebug -> assembleRelease if needed
-      - name: Build APK
+      - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      # 🔍 Collect APKs from BOTH possible locations
-      - name: Find APKs
+      - name: Collect APKs
         run: |
           mkdir -p apk_out
           find app/build -type f -name "*.apk" -exec cp {} apk_out/ \;
           ls -lh apk_out
 
-      # 📦 Upload as workflow artifact
-      - name: Upload APK Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: apk_out/*.apk
 
-      # 🚀 Create GitHub Release
       - name: Create Release
-        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v-${{ github.run_number }}
           name: Build ${{ github.run_number }}
-          draft: false
-          prerelease: false
           files: apk_out/*.apk
