@@ -19,6 +19,7 @@
 #include "Includes/Utils.h"
 
 #include "KittyMemory/MemoryPatch.h"
+#include "And64InlineHook/And64InlineHook.hpp"
 #include "Menu.h"
 
 
@@ -34,7 +35,6 @@ struct My_Patches {
 } hexPatches;
 
 
-
 void *hack_thread(void *) {
     LOGI(OBFUSCATE("pthread created"));
 
@@ -46,7 +46,6 @@ void *hack_thread(void *) {
     LOGI(OBFUSCATE("%s has been loaded"), (const char *) targetLibName);
 
 #if defined(__aarch64__)
-
 
 
 #else
@@ -133,7 +132,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
     binJava();
     return JNI_VERSION_1_6;
 }
-
 
 
 __attribute__((constructor))
