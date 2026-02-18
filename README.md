@@ -1,112 +1,59 @@
-# NativeModMenu
-A **custom reimplementation of the LGL Android Mod Menu** that loads the Java UI **entirely from memory** using `InMemoryDexClassLoader`, without shipping a separate `.dex` file on disk.
+# ==========================================================
+#                  NATIVE MOD MENU (NMM)
+# ==========================================================
+#  A custom high-performance reimplementation of the LGL 
+#  Android Mod Menu with In-Memory Dex Loading.
+# ==========================================================
 
-This version embeds a prebuilt `FloatingModMenu.dex` as a **HEX string** and dynamically loads it at runtime via JNI.
+[ DESCRIPTION ]
+NativeModMenu is a stealth-oriented implementation that loads 
+the Java UI layer entirely from memory using InMemoryDexClassLoader. 
+By embedding the FloatingModMenu.dex as a HEX string, it eliminates 
+the need for shipping or extracting external .dex files on disk.
 
----
+[ CORE ARCHITECTURE ]
+- ZERO DISK FOOTPRINT: No external dex file or asset extraction.
+- MEMORY LOADING: Utilizes dalvik.system.InMemoryDexClassLoader.
+- JNI BOOTSTRAP: Menu initialization triggered via native code.
+- CLEAN INJECTION: Stealthier footprint for modern environments.
+- FULL COMPATIBILITY: Supports existing LGL Java-based menu code.
 
-## ✨ Key Differences from Original LGL Mod Menu
+[ TECHNICAL WORKFLOW ]
+1. DEX EMBEDDING: FloatingModMenu.dex is stored as a HEX string.
+2. BUFFER CONVERSION: HEX string is parsed into a ByteBuffer at runtime.
+3. DYNAMIC LOADING: InMemoryDexClassLoader loads the buffer directly.
+4. NATIVE BINDING: JNI registers functions to the Java menu class.
+5. EXECUTION: Calls 'FloatingModMenu.antik(Context)' to launch.
 
-- **No external dex file**
-    - The menu dex is embedded as HEX and loaded directly from memory.
-- **In-memory class loading**
-    - Uses `dalvik.system.InMemoryDexClassLoader`
-- **JNI-driven bootstrap**
-    - Menu initialization is triggered fully from native code
-- **Cleaner injection surface**
-    - No file writes, no asset extraction
-- **Compatible with existing LGL menu Java code**
+[ JNI NATIVE INTERFACE ]
+The following methods are registered dynamically:
 
----
+- Icon()              : Returns menu icon data.
+- IconWebViewData()   : Returns WebView-based icon data.
+- getFeatureList()    : Defines the menu features.
+- settingsList()      : Defines the menu settings.
+- Changes(...)        : Handles feature toggles and logic.
+- setTitleText(...)   : Customizes the menu title.
+- setHeadingText(...) : Customizes the menu heading.
 
-## 🧠 How It Works (High-Level)
+[ SYSTEM REQUIREMENTS ]
+- OS      : Android 8.0+ (API Level 26+)
+- ARCH    : ARMv7, ARM64-v8a
+- RUNTIME : JNI-based injection environment
+- ASSET   : Prebuilt compatible FloatingModMenu.dex
 
-1. **Dex embedding**
-    - `FloatingModMenu.dex` is converted to a HEX string and stored in native code.
-2. **HEX → ByteBuffer**
-    - HEX string is converted back into bytes at runtime.
-3. **InMemoryDexClassLoader**
-    - Dex is loaded directly from memory.
-4. **JNI native bindings**
-    - Native functions are registered to the Java menu class.
-5. **Menu startup**
-    - Calls `FloatingModMenu.antik(Context)` to launch the floating menu.
+[ ENTRY POINT ]
+- Function: void binJava()
+- Executed post JNI_OnLoad.
+- Context acquisition via ActivityThread.
 
----
+[ LEGAL & ETHICAL NOTICE ]
+This project is intended for educational and research purposes 
+only. Modifying runtime behavior of applications may violate 
+Terms of Service. Use responsibly.
 
-## 📂 Important Components
-
-### Embedded Dex
-```cpp
-static std::string DI = "HEX_CODE_OF_DEX";
-```
-
-- This must be the **HEX-encoded** version of `FloatingModMenu.dex`.
-
----
-
-### JNI Native Interface
-
-Registered native methods:
-
-| Method | Description |
-|------|------------|
-| `Icon()` | Menu icon |
-| `IconWebViewData()` | WebView icon data |
-| `getFeatureList()` | Feature list |
-| `settingsList()` | Settings list |
-| `Changes(...)` | Feature toggle handler |
-| `setTitleText(TextView)` | Title customization |
-| `setHeadingText(TextView)` | Heading customization |
-
----
-
-### Dex Loading Logic
-
-Uses:
-```java
-InMemoryDexClassLoader(ByteBuffer[] dex, ClassLoader parent)
-```
-
-Loads:
-```java
-uk.lgl.modmenu.FloatingModMenu
-```
-
----
-
-## 🚀 Entry Point
-
-```cpp
-void binJava();
-```
-
-- Called after `JNI_OnLoad`
-- Retrieves `Application` context via `ActivityThread`
-- Starts menu initialization
-
----
-
-## 🔧 Requirements
-
-- Android 8.0+ (API 26+)
-- ARMv7 / ARM64
-- JNI-based injection environment
-- Prebuilt compatible `FloatingModMenu.dex`
-
----
-
-## ⚠️ Notes
-
-- This project modifies runtime behavior of apps.
-- Usage may violate application Terms of Service.
-- Intended for educational and research purposes.
-
----
-
-## 📜 Credits
-
-- Original concept: LGL Android Mod Menu
-- Project Creation: Aniket
-- In-memory dex loader: NepMods
-
+[ CREDITS ]
+- Original Concept : LGL Android Mod Menu
+- Project Lead     : AntikMods
+- Dex Loader Logic : NepMods
+# ==========================================================
